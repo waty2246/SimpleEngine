@@ -27,6 +27,8 @@
 *.lib
 
 # Executables
-*.exe
 *.out
 *.app
+
+# Generated Project Files
+/_/
