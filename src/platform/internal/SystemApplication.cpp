@@ -28,14 +28,14 @@ namespace sp
 			m_systemSpecs = new SystemSpecsWrapper(GetModuleHandle(nullptr));
 
 			preServiceCollection->AddSingleton<SystemSpecs, SystemSpecsWrapper>([&]
-				{
-					return this->m_systemSpecs;
-				});
+			{
+				return this->m_systemSpecs;
+			});
 
 			preServiceCollection->AddSingleton<WindowSpecs, WindowSpecsWrapper>([&]
-				{
-					return this->m_windowSpecification;
-				});
+			{
+				return this->m_windowSpecs;
+			});
 
 			m_keyboardInput = sp::make_scoped<sp::platform::input::KeyboardInputWrapper>();
 			auto windowProps = sp::make_scoped<WindowProps>();
@@ -58,8 +58,8 @@ namespace sp
 
         bool SystemApplication::Run()
         {
-			ShowWindow(m_windowSpecification->GetWindowHandle(), SW_SHOW);
-			SP_THROW_IF_FALSE(UpdateWindow(m_windowSpecification->GetWindowHandle()),"");
+			ShowWindow(m_windowSpecs->GetWindowHandle(), SW_SHOW);
+			SP_THROW_IF_FALSE(UpdateWindow(m_windowSpecs->GetWindowHandle()),"");
 
 			MSG msg = { 0 };
 			bool done = false;
@@ -175,7 +175,7 @@ namespace sp
 				SP_THROW_IF_FALSE(windowHandle != nullptr,"");
 			}
 
-			m_windowSpecification = new WindowSpecsWrapper(
+			m_windowSpecs = new WindowSpecsWrapper(
 				windowHandle,
 				windowWidth, 
 				windowHeight,
@@ -195,66 +195,65 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	static sp::platform::SystemApplication* systemApplication = nullptr;
 	switch (msg)
 	{
-	case WM_CREATE:
-	{
-		systemApplication = reinterpret_cast<sp::platform::SystemApplication*>(reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams);
+		case WM_CREATE:
+		{
+			systemApplication = reinterpret_cast<sp::platform::SystemApplication*>(reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams);
 
-		return 0;
-	}
-	case WM_DESTROY:
-	{
-		PostQuitMessage(0);
-		return 0;
-	}
-
-	case WM_CLOSE:
-	{
-		DestroyWindow(hwnd);
-		return 0;
-	}
-	case WM_KEYDOWN:
-	{
-		systemApplication->GetKeyboardInput()->SetKeyDown(static_cast<sp::platform::input::KeyCode>(wParam));
-		return 0;
-	}
-	case WM_KEYUP:
-	{
-		systemApplication->GetKeyboardInput()->SetKeyUp(static_cast<sp::platform::input::KeyCode>(wParam));
-		return 0;
-	}
-	case WM_MOUSEMOVE:
-	{
-		return 0;
-	}
-	case WM_LBUTTONDOWN:
-	{
-		return 0;
-	}
-	case WM_MBUTTONDOWN:
-	{
-		return 0;
-	}
-	case WM_RBUTTONDOWN:
-	{
-		return 0;
-	}
-	case WM_LBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_RBUTTONUP:
-	{
-		return 0;
-	}
-	case WM_MOUSEHWHEEL:
-	{
-		return 0;
-	}
-	case WM_MOUSELEAVE:
-	{
-		return 0;
-	}
-	default:
-	{
-		return DefWindowProc(hwnd, msg, wParam, lParam);
-	}
+			return 0;
+		}
+		case WM_DESTROY:
+		{
+			PostQuitMessage(0);
+			return 0;
+		}
+		case WM_CLOSE:
+		{
+			DestroyWindow(hwnd);
+			return 0;
+		}
+		case WM_KEYDOWN:
+		{
+			systemApplication->GetKeyboardInput()->SetKeyDown(static_cast<sp::platform::input::KeyCode>(wParam));
+			return 0;
+		}
+		case WM_KEYUP:
+		{
+			systemApplication->GetKeyboardInput()->SetKeyUp(static_cast<sp::platform::input::KeyCode>(wParam));
+			return 0;
+		}
+		case WM_MOUSEMOVE:
+		{
+			return 0;
+		}
+		case WM_LBUTTONDOWN:
+		{
+			return 0;
+		}
+		case WM_MBUTTONDOWN:
+		{
+			return 0;
+		}
+		case WM_RBUTTONDOWN:
+		{
+			return 0;
+		}
+		case WM_LBUTTONUP:
+		case WM_MBUTTONUP:
+		case WM_RBUTTONUP:
+		{
+			return 0;
+		}
+		case WM_MOUSEHWHEEL:
+		{
+			return 0;
+		}
+		case WM_MOUSELEAVE:
+		{
+			return 0;
+		}
+		default:
+		{
+			return DefWindowProc(hwnd, msg, wParam, lParam);
+		}
 	}
 }

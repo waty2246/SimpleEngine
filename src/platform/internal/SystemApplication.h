@@ -34,7 +34,7 @@ namespace sp
 			std::shared_ptr<sp::platform::IApplication> m_application;
 			sp::scoped_ptr<sp::platform::input::KeyboardInputWrapper> m_keyboardInput;
 			SystemSpecsWrapper* m_systemSpecs;
-			WindowSpecsWrapper* m_windowSpecification;
+			WindowSpecsWrapper* m_windowSpecs;
 		};
 	}
 }
